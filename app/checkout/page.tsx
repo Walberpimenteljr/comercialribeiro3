@@ -47,14 +47,33 @@ export default function CheckoutPage() {
     setTotal(totalCalculado)
   }
 
-  const confirmarCompra = () => {
-    alert(`Compra finalizada!\nTotal: R$ ${total.toFixed(2)}\nPagamento: ${formaPagamento.toUpperCase()}`)
-    router.push("/produto") // volta para produtos após finalizar
+  const confirmarCompra = async () => {
+    if (carrinho.length === 0) {
+      alert("Seu carrinho está vazio!")
+      return
+    }
+
+    try {
+      const resposta = await fetch("/api/pagamento", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ carrinho, total }),
+      })
+
+      const data = await resposta.json()
+      if (data.init_point) {
+        window.location.href = data.init_point
+      } else {
+        alert("Erro ao iniciar pagamento. Verifique a API.")
+      }
+    } catch (err) {
+      console.error(err)
+      alert("Erro ao iniciar pagamento.")
+    }
   }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      {/* Botão Voltar para Loja no topo */}
       <div className="max-w-4xl mx-auto mb-6">
         <RedButton onClick={() => router.push("/produto")} className="px-4 py-2">
           ← Voltar para Loja
@@ -121,20 +140,9 @@ export default function CheckoutPage() {
                 />
                 <span>Cartão</span>
               </label>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="pagamento"
-                  value="dinheiro"
-                  checked={formaPagamento === "dinheiro"}
-                  onChange={e => setFormaPagamento(e.target.value)}
-                />
-                <span>Dinheiro</span>
-              </label>
             </div>
           </div>
 
-          {/* Botão Confirmar Compra no final */}
           <div className="mt-6 text-center">
             <RedButton onClick={confirmarCompra} className="px-6 py-3 text-lg">
               Confirmar Compra
