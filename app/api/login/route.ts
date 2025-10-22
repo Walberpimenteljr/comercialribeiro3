@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,31 +9,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Email e senha são obrigatórios" }, { status: 400 });
     }
 
-    // Buscar usuário
-    const { data: user, error } = await supabase
+    const { data, error } = await supabase
       .from("users")
-      .select("*")
+      .select()
       .eq("email", email)
+      .eq("password", password)
       .single();
 
-    if (error || !user) {
-      return NextResponse.json({ message: "Credenciais inválidas" }, { status: 401 });
-    }
-
-    // Comparar senha
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
+    if (error || !data) {
       return NextResponse.json({ message: "Credenciais inválidas" }, { status: 401 });
     }
 
     return NextResponse.json({
       message: "Login realizado com sucesso",
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: data.id, name: data.name, email: data.email }
     });
   } catch (err) {
-    return NextResponse.json(
-      { message: "Erro interno do servidor", details: (err as Error).message },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "Erro interno do servidor", details: (err as Error).message }, { status: 500 });
   }
 }
