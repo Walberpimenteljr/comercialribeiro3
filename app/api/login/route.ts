@@ -1,29 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-
-const usersFile = path.join(process.cwd(), "data/users.json");
+import { supabase } from "@/lib/supabase";
+import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
 
     if (!email || !password) {
-      return NextResponse.json(
-        { message: "Email e senha são obrigatórios" },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: "Email e senha são obrigatórios" }, { status: 400 });
     }
 
-    let users = [];
-    if (fs.existsSync(usersFile)) {
-      const data = fs.readFileSync(usersFile, "utf-8");
-      users = JSON.parse(data);
+    // Buscar usuário
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .single();
+
+    if (error || !user) {
+      return NextResponse.json({ message: "Credenciais inválidas" }, { status: 401 });
     }
 
-    const user = users.find((u: any) => u.email === email && u.password === password);
-
-    if (!user) {
+    // Comparar senha
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
       return NextResponse.json({ message: "Credenciais inválidas" }, { status: 401 });
     }
 
@@ -31,9 +31,9 @@ export async function POST(request: NextRequest) {
       message: "Login realizado com sucesso",
       user: { id: user.id, name: user.name, email: user.email },
     });
-  } catch (error) {
+  } catch (err) {
     return NextResponse.json(
-      { message: "Erro interno do servidor", details: (error as Error).message },
+      { message: "Erro interno do servidor", details: (err as Error).message },
       { status: 500 }
     );
   }

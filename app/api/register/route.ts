@@ -1,48 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-
-const usersFile = path.join(process.cwd(), "data/users.json");
+import { supabase } from "@/lib/supabase";
+import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
     const { name, email, password } = await request.json();
 
     if (!name || !email || !password) {
-      return NextResponse.json(
-        { message: "Nome, email e senha são obrigatórios" },
-        { status: 400 }
-      );
-    }
-
-    // Ler usuários existentes
-    let users = [];
-    if (fs.existsSync(usersFile)) {
-      const data = fs.readFileSync(usersFile, "utf-8");
-      users = JSON.parse(data);
+      return NextResponse.json({ message: "Todos os campos são obrigatórios" }, { status: 400 });
     }
 
     // Verificar se email já existe
-    if (users.find((u: any) => u.email === email)) {
-      return NextResponse.json(
-        { message: "Email já cadastrado" },
-        { status: 409 }
-      );
+    const { data: existingUser } = await supabase
+      .from("users")
+      .select("id")
+      .eq("email", email)
+      .single();
+
+    if (existingUser) {
+      return NextResponse.json({ message: "Email já cadastrado" }, { status: 409 });
     }
 
-    // Criar novo usuário
-    const newUser = { id: Date.now(), name, email, password };
-    users.push(newUser);
+    // Hash da senha
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
+    // Inserir usuário
+    const { data, error } = await supabase
+      .from("users")
+      .insert({ name, email, password: hashedPassword })
+      .select()
+      .single();
+
+    if (error) throw error;
 
     return NextResponse.json({
       message: "Usuário cadastrado com sucesso",
-      user: { id: newUser.id, name: newUser.name, email: newUser.email },
+      user: { id: data.id, name: data.name, email: data.email },
     });
-  } catch (error) {
+  } catch (err) {
     return NextResponse.json(
-      { message: "Erro interno do servidor", details: (error as Error).message },
+      { message: "Erro interno do servidor", details: (err as Error).message },
       { status: 500 }
     );
   }
