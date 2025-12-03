@@ -78,7 +78,7 @@ export default function ProdutoPage() {
     { id: 49, nome: "Tinta Suvinil Rosa", preco: 145.00, unidade: "galão 3.6L", estoque: 61, imagem: "https://m.magazineluiza.com.br/a-static/420x420/tinta-para-parede-acrilica-suvinil-800ml-classica-cor-rosa-premium-cor-rosa-queimado/tintasrt/cla8crosapink/2887ffb9c9d922f2cc9f1bf20f647b28.jpeg", categoria: "Tintas e Outros" },
     { id: 50, nome: "Piso Stone", preco: 23.00, unidade: "m²", estoque: 100, imagem: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTB_6sVKPOV83rInmIk2UMIUKHe4JkzPqcNb9hFolCza3xsL-4UV7J8UqNnh64SQk6pZNrRYNABLdGsxJVLZjWspHTQLrOJYnX3UX0ndr4", categoria: "Pisos e Revestimentos" },
     { id: 51, nome: "Capacete de Obra", preco: 20.02, unidade: "unidade", estoque: 100, imagem: "https://hidrauflex.cdn.magazord.com.br/img/2025/09/produto/2614/227073-800-800.jpg?ims=600x600", categoria: "Ferramentas" },
-    { id: 52, nome: "Procura-se emprego ", preco: 0,01 unidade: "1 ", estoque: 1, imagem: "https://ibb.co/7FrVMzK", categoria: "Emprego" }
+    { id: 52, nome: "Procura-se emprego ", preco: 0.01 unidade: "1 ", estoque: 1, imagem: "https://ibb.co/7FrVMzK", categoria: "Emprego" },
   ]; 
   const adicionarCarrinho = (produto: Produto) => {
     setCarrinho(prev => {
