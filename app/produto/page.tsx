@@ -3,9 +3,9 @@ import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { Logo } from "@/component/Logo"
 import { RedButton } from "@/component/RedButton"
-import { ShoppingCart, User, X } from "lucide-react" // Assumindo o uso de lucide-react para ícones
+import { ShoppingCart, User, X } from "lucide-react" 
 
-// Importações e Interfaces mantidas
+// Interface Produto mantida...
 interface Produto {
   id: number
   nome: string
@@ -23,7 +23,7 @@ export default function ProdutoPage() {
   const [mostrarCarrinho, setMostrarCarrinho] = useState(true) 
   const [filtro, setFiltro] = useState<string>("Todos")
 
-  // --- Lógica de Dados (Inalterada) ---
+  // --- Lógica de Dados e Funções (Inalteradas) ---
   const produtos: Produto[] = [
     { id: 1, nome: "Cimento Portland", preco: 25.9, unidade: "50kg", estoque: 100, imagem: "https://static.wixstatic.com/media/e645de_4c98327f16584cdabd476aa3f29bbf2f~mv2.jpg/v1/fill/w_420,h_420,al_c,lg_1,q_80/e645de_4c98327f16584cdabd476aa3f29bbf2f~mv2.jpg", categoria: "Cimento" },
     { id: 2, nome: "Tijolo Cerâmico", preco: 0.85, unidade: "unidade", estoque: 5000, imagem: "https://img.irroba.com.br/filters:fill(fff):quality(80)/fluzaoco/catalog/api/fluzaoco_citelirr/66bdef5bd2d01.jpg", categoria: "Tijolo" },
@@ -36,8 +36,7 @@ export default function ProdutoPage() {
     { id: 9, nome: "Piso Pisoforte Orlando Acetinado Classe A 44 x 44 Cm", preco: 25.10, unidade: "unidade", estoque: 2000, imagem: "https://images.tcdn.com.br/img/img_prod/551909/piso_pisoforte_orlando_acetinado_classe_a_44_x_44_1_20251009152354_0fbf91a64554.jpg", categoria: "Pisos e Revestimentos" },
     { id: 10, nome: "Cimento Montes Claros 50 Kg", preco: 44.50, unidade: "50kg", estoque: 100, imagem: "https://images.tcdn.com.br/img/img_prod/551909/cimento_montes_claros_50_kg_a_vista_entrega_em_ubaira_zona_rural_entrega_em_cidades_vizinhas_763_2_0098b569731ab5777df24903c0d270ec.jpg", categoria: "Cimento" },
   ]
-
-  // --- Funções de Lógica (Inalteradas) ---
+  
   const adicionarCarrinho = (produto: Produto) => {
     setCarrinho(prev => {
       const itemExistente = prev.find(item => item.produto.id === produto.id)
@@ -121,8 +120,8 @@ export default function ProdutoPage() {
           </div>
         </div>
       </header>
-
-      {/* Banner Institucional Estilizado em Vermelho */}
+      
+      {/* Banner Institucional */}
       <div className="bg-gradient-to-br from-red-700 to-red-500 text-white p-10 mt-0 sm:mt-4 mb-10 mx-auto max-w-7xl rounded-none sm:rounded-xl text-center shadow-2xl shadow-red-300/50">
         <h2 className="text-4xl sm:text-5xl font-extrabold mb-3 tracking-tight">Construa o Seu Sonho!</h2>
         <p className="text-xl opacity-90 mb-6">Materiais de alta qualidade e com o melhor preço para sua obra.</p>
@@ -153,13 +152,13 @@ export default function ProdutoPage() {
             ))}
           </div>
 
-          {/* Grid de produtos Estilizado com Botão Centralizado */}
+          {/* Grid de produtos Estilizado com Botão Curto */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {produtosFiltrados.length > 0 ? (
               produtosFiltrados.map(produto => (
                 <div
                   key={produto.id}
-                  className="bg-white p-6 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 flex flex-col relative border border-gray-100" // Removido items-center do card principal
+                  className="bg-white p-6 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 flex flex-col relative border border-gray-100"
                 >
                   {produto.estoque < 10 && (
                     <span className="absolute top-4 right-4 bg-yellow-500 text-gray-800 text-xs font-bold px-3 py-1 rounded-full shadow-md animate-pulse">
@@ -181,13 +180,15 @@ export default function ProdutoPage() {
                     <h2 className="text-xl font-bold text-gray-800 line-clamp-2 mb-1">{produto.nome}</h2>
                     <p className="text-sm text-gray-500 mb-3">({produto.unidade})</p>
                     <p className="text-2xl text-red-600 font-extrabold mt-auto mb-4">R$ {produto.preco.toFixed(2)}</p>
-                    {/* Botão Centralizado na Largura Total */}
+                    
+                    {/* BOTÃO CURTO E COM ÍCONE */}
                     <RedButton
-                      className="px-6 py-2 w-full bg-red-600 hover:bg-red-700 transition duration-200 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl disabled:bg-gray-400"
+                      className="px-6 py-2 w-full bg-red-600 hover:bg-red-700 transition duration-200 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl disabled:bg-gray-400 flex items-center justify-center gap-2"
                       onClick={() => adicionarCarrinho(produto)}
                       disabled={produto.estoque <= 0}
                     >
-                      {produto.estoque > 0 ? 'Adicionar ao Carrinho' : 'Esgotado'}
+                      <ShoppingCart className="w-5 h-5"/> 
+                      {produto.estoque > 0 ? 'Comprar' : 'Esgotado'} 
                     </RedButton>
                   </div>
                 </div>
@@ -199,7 +200,7 @@ export default function ProdutoPage() {
         </div>
         {/* --- Fim Produtos --- */}
 
-        {/* Carrinho Lateral (Drawer) - Cores em Vermelho */}
+        {/* Carrinho Lateral (Drawer) */}
         <div className={`
           fixed inset-y-0 right-0 w-80 sm:w-96 bg-white shadow-2xl p-6 z-40 transition-transform duration-300
           ${mostrarCarrinho ? 'translate-x-0' : 'translate-x-full'}
