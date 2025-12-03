@@ -27,7 +27,7 @@ export default function ProdutoPage() {
   const produtos: Produto[] = [
     // Produtos originais
     { id: 1, nome: "Cimento Portland", preco: 25.90, unidade: "50kg", estoque: 100, imagem: "https://static.wixstatic.com/media/e645de_4c98327f16584cdabd476aa3f29bbf2f~mv2.jpg/v1/fill/w_420,h_420,al_c,lg_1,q_80/e645de_4c98327f16584cdabd476aa3f29bbf2f~mv2.jpg", categoria: "Cimento" },
-    { id: 2, nome: "Tijolo Cerâmico", preco: 0.85, unidade: "unidade", estoque: 5000, imagem: "https://discord.com/channels/801137948023980033/801137948577103913/1445618673552199731", categoria: "Tijolo" },
+    { id: 2, nome: "Tijolo Cerâmico", preco: 0.85, unidade: "unidade", estoque: 5000, imagem: "https://images.tcdn.com.br/img/img_prod/999130/tijolo_ceramico_de_vedacao_14x19x39cm_8073_1_68fe793c144c5af92ec609f70aa76c52.jpeg", categoria: "Tijolo" },
     { id: 3, nome: "Areia Média", preco: 45.00, unidade: "1m³", estoque: 50, imagem: "https://images.tcdn.com.br/img/img_prod/1184849/areia_media_lavada_m3_367_1_4135efa86a10d532849f5a31cc56f1de.jpg", categoria: "Areia e Brita" },
     { id: 4, nome: "Brita 1", preco: 55.00, unidade: "1m³", estoque: 60, imagem: "https://images.tcdn.com.br/img/img_prod/1320315/pedra_brita_1_m3_3637_1_28fb2f1c6626fac1a56bee92facf4d7b.jpg", categoria: "Areia e Brita" },
     { id: 5, nome: "Ferro 10mm", preco: 28.50, unidade: "barra", estoque: 200, imagem: "https://padovani.vtexassets.com/arquivos/ids/160012/barra-de-ferro-ca50-ca60-gerdau.jpg?v=635666043946270000", categoria: "Ferro" },
@@ -38,7 +38,7 @@ export default function ProdutoPage() {
     { id: 10, nome: "Cimento Montes Claros 50 Kg", preco: 44.50, unidade: "50kg", estoque: 100, imagem: "https://images.tcdn.com.br/img/img_prod/551909/cimento_montes_claros_50_kg_a_vista_entrega_em_ubaira_zona_rural_entrega_em_cidades_vizinhas_763_2_0098b569731ab5777df24903c0d270ec.jpg", categoria: "Cimento" },
     // Novos itens corrigidos e padronizados
     { id: 11, nome: "Bloco de Concreto", preco: 2.00, unidade: "unidade", estoque: 100, imagem: "https://www.millato.com.br/assets/uploads/produtos/millato-Produtos-13092019175513.png", categoria: "Tijolo" },
-    { id: 12, nome: "Cal Usical", preco: 20.90, unidade: "20kg", estoque: 100, imagem: "https://images.tcdn.com.br/img/img_prod/956417/cal_hidratada_para_construcao_20kg_itambe_itacua_163_1_18c7c93845c47936a282f64f43c3a91e.jpg", categoria: "Tintas e Outros" },
+    { id: 12, nome: "Cal Usical", preco: 20.90, unidade: "20kg", estoque: 100, imagem: "https://multigeral.com.br/image/cache/catalog/geral/produto/argamassa_ac3_usical-800x800.jpg", categoria: "Tintas e Outros" },
     { id: 13, nome: "Piso Cerâmico Branco", preco: 37.00, unidade: "m²", estoque: 100, imagem: "https://cdn.leroymerlin.com.br/products/piso_brilhante_esna_rt60_1014_60x60cm_embramaco_91801136_70e1_220x220.jpg", categoria: "Pisos e Revestimentos" },
     { id: 14, nome: "Piso Cerâmico Efeito Madeira", preco: 31.00, unidade: "m²", estoque: 100, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3WpjFTL6DQtmvAqqSnw082h1tL_QGbJkOhA&s", categoria: "Pisos e Revestimentos" },
     { id: 15, nome: "Piso Cerâmico Cinza", preco: 35.00, unidade: "m²", estoque: 100, imagem: "https://casamattos.fbitsstatic.net/img/p/piso-ceramica-rocha-forte-acetinado-cinza-escuro-em-hd-70x70cm-73882/260467.jpg?w=370&h=370&v=no-change&qs=ignore - peso ceramico cinza", categoria: "Pisos e Revestimentos" },
@@ -77,7 +77,8 @@ export default function ProdutoPage() {
     { id: 48, nome: "Piso Triunfo", preco: 135.00, unidade: "m²", estoque: 100, imagem: "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcT8G-V_5tK_BmlAA7HOas8WJQ_LDEYiWlRE61U5hpzfSnlTYJMgYk8lqza9gMhNgv5Olx8ye8y3XeQypAKM1aTl63_uZ3thTLYmc6k5t1ik9CWZUg-_b5o3", categoria: "Pisos e Revestimentos" },
     { id: 49, nome: "Tinta Suvinil Rosa", preco: 145.00, unidade: "galão 3.6L", estoque: 61, imagem: "https://m.magazineluiza.com.br/a-static/420x420/tinta-para-parede-acrilica-suvinil-800ml-classica-cor-rosa-premium-cor-rosa-queimado/tintasrt/cla8crosapink/2887ffb9c9d922f2cc9f1bf20f647b28.jpeg", categoria: "Tintas e Outros" },
     { id: 50, nome: "Piso Stone", preco: 23.00, unidade: "m²", estoque: 100, imagem: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTB_6sVKPOV83rInmIk2UMIUKHe4JkzPqcNb9hFolCza3xsL-4UV7J8UqNnh64SQk6pZNrRYNABLdGsxJVLZjWspHTQLrOJYnX3UX0ndr4", categoria: "Pisos e Revestimentos" },
-    { id: 51, nome: "Capacete de Obra", preco: 20.02, unidade: "unidade", estoque: 100, imagem: "https://hidrauflex.cdn.magazord.com.br/img/2025/09/produto/2614/227073-800-800.jpg?ims=600x600", categoria: "Ferramentas" }
+    { id: 51, nome: "Capacete de Obra", preco: 20.02, unidade: "unidade", estoque: 100, imagem: "https://hidrauflex.cdn.magazord.com.br/img/2025/09/produto/2614/227073-800-800.jpg?ims=600x600", categoria: "Ferramentas" },
+    { id: 52, nome: "Procura-se emprego ", preco: 0,01 unidade: "1 ", estoque: 1, imagem: "https://ibb.co/7FrVMzK", categoria: "Emprego" },
   ]; 
   const adicionarCarrinho = (produto: Produto) => {
     setCarrinho(prev => {
