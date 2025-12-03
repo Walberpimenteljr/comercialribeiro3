@@ -46,11 +46,26 @@ export default function RegisterPage() {
         });
         router.push("/login");
       } else {
+        // --- INÍCIO: Lógica Ajustada para Evitar o Toast Vermelho Vazio ---
+        let errorMessage = data.message || "Erro ao criar conta";
+
+        // Se o backend retornou a lista de erros de validação
+        if (data.errors && Array.isArray(data.errors) && data.errors.length > 0) {
+          // Formatamos os erros como uma string contínua, separada por vírgula.
+          // Isso é mais seguro para a maioria dos componentes de notificação/toast.
+          const errorList = data.errors.join(", ");
+          
+          // Usamos a mensagem principal do backend e adicionamos a lista de erros.
+          // Ex: "A senha não atende aos requisitos de segurança. (Min 8, 1 maiúscula, 1 número)"
+          errorMessage = `${data.message || 'Falha na validação'}: ${errorList}`;
+        }
+        
         toast({
           title: "Erro no cadastro",
-          description: data.message || "Erro ao criar conta",
+          description: errorMessage, // Agora esta string deve ser segura para o toast
           variant: "destructive",
         });
+        // --- FIM: Lógica Ajustada ---
       }
     } catch {
       toast({
@@ -63,6 +78,7 @@ export default function RegisterPage() {
     }
   };
 
+  // ... (Restante do seu componente 'return' permanece o mesmo)
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
