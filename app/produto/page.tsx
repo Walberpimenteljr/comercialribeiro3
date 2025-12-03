@@ -58,7 +58,7 @@ export default function ProdutoPage() {
   const finalizarCompra = () => {
     if (carrinho.length === 0) return
     const query = encodeURIComponent(JSON.stringify(carrinho))
-    router.push(/checkout?carrinho=${query})
+    router.push(`/checkout?carrinho=${query}`)
   }
 
   const total = carrinho.reduce((acc, item) => acc + item.produto.preco * item.quantidade, 0)
