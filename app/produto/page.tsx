@@ -3,7 +3,7 @@ import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { Logo } from "@/component/Logo"
 import { RedButton } from "@/component/RedButton"
-import { ShoppingCart, User, X } from "lucide-react" 
+import { ShoppingCart, User, X } from "lucide-react"
 
 // Interface Produto mantida...
 interface Produto {
@@ -20,7 +20,7 @@ export default function ProdutoPage() {
   const router = useRouter()
   const [carrinho, setCarrinho] = useState<{ produto: Produto; quantidade: number }[]>([])
   const [mostrarMenu, setMostrarMenu] = useState(false)
-  const [mostrarCarrinho, setMostrarCarrinho] = useState(true) 
+  const [mostrarCarrinho, setMostrarCarrinho] = useState(true)
   const [filtro, setFiltro] = useState<string>("Todos")
 
   // --- Lógica de Dados e Funções (Inalteradas) ---
@@ -69,7 +69,7 @@ export default function ProdutoPage() {
     { id: 40, nome: "Piso Fioranno", preco: 69.00, unidade: "m²", estoque: 100, imagem: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcSgKzGmhH3tZd729PkcsIQxhTw6BTnjHcS54xUB_L1USEChRRAK85MxX5vVaJpB7Dr7MJSDCNIVUKhrXe3dETiXG8xLw-tCMXLjXNl6vyWB", categoria: "Pisos e Revestimentos" },
     { id: 41, nome: "Tinta Suvinil Amarelo", preco: 145.00, unidade: "galão 3.6L", estoque: 81, imagem: "https://a-static.mlcdn.com.br/420x420/tinta-para-parede-acrilica-suvinil-classica-800ml-cor-amarelo-lavavel-premium-cor-amarelo-caju-cor-amarelo-colonial/tintasrt/cla8aamareloamendoa/319eba3a89d53b04093cf68736106573.jpeg", categoria: "Tintas e Outros" },
     { id: 42, nome: "Piso Cerâmico Polido Tiffany", preco: 214.00, unidade: "m²", estoque: 100, imagem: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTCZTnpzwNHVpFCcsUpwNIF7S45x8u9WnqImiXHNnM-7iQE2pdO0LhzkCIa9w_3zFSdQk3-gK42EzmzyLl73L6wVb_J0A3o84SkyhlACQjcpqR0UZwtNhzT", categoria: "Pisos e Revestimentos" },
-    { id: 43, nome: "Alicate", preco: 27.02, unidade: "unidade", estoque: 56, imagem: "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcT5uNMMWiYdiV7_P3jyqdU6D79ciHGlFNDxXRkUjG3j7MJNt5CWiTxhYZwhuxPwzXr6Y-1IwoIb3uvVgk70q8vI1FnOayxn0ryj7XBu0rRHedj0Bysr0ov8aA", categoria: "Ferramentas" },
+    { id: 43, nome: "Alicate", preco: 27.02, unidade: "unidade", estoque: 56, imagem: "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcT5uNMMWiYdiV7_P3jyqdU6D79ciHGlFNDxXRkUjG3j7MJNt5CWiTxhYZwhuxPwzXr6Y-1IFnOayxn0ryj7XBu0rRHedj0Bysr0ov8aA", categoria: "Ferramentas" },
     { id: 44, nome: "Piso Vinílico", preco: 400.00, unidade: "m²", estoque: 100, imagem: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcQuGXC1OM2ihQ1xVx2YED5-It3a2Y8FfYZ9nQLTsdwkeF9c21ODO626XrGo4RXDZ1sr5GB7QijMw1uAgwmAqrVEjVDyWIjikYDqduZ2CBQI", categoria: "Pisos e Revestimentos" },
     { id: 45, nome: "Tinta Suvinil Roxo", preco: 145.00, unidade: "galão 3.6L", estoque: 41, imagem: "https://a-static.mlcdn.com.br/420x420/tinta-para-parede-roxo-suvinil-classica-premium-antimofo-800ml/tintasrt/cla8broxomd/f6df3333bd647391b50f9a55d2281f07.jpeg", categoria: "Tintas e Outros" },
     { id: 46, nome: "Kit Chave de Fenda", preco: 60.12, unidade: "kit", estoque: 70, imagem: "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcQZjRxW4L55WWM0GFn9HfWnyVHYFeix9B8zXW6Rpj8QDME-WuP-ckyhoJI8cSMtczwWviNqAqmlENoaceOV6OgKMeQ8udVa9jCosJd3ewMKycs00a9Qsx4g", categoria: "Ferramentas" },
@@ -78,7 +78,8 @@ export default function ProdutoPage() {
     { id: 49, nome: "Tinta Suvinil Rosa", preco: 145.00, unidade: "galão 3.6L", estoque: 61, imagem: "https://m.magazineluiza.com.br/a-static/420x420/tinta-para-parede-acrilica-suvinil-800ml-classica-cor-rosa-premium-cor-rosa-queimado/tintasrt/cla8crosapink/2887ffb9c9d922f2cc9f1bf20f647b28.jpeg", categoria: "Tintas e Outros" },
     { id: 50, nome: "Piso Stone", preco: 23.00, unidade: "m²", estoque: 100, imagem: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTB_6sVKPOV83rInmIk2UMIUKHe4JkzPqcNb9hFolCza3xsL-4UV7J8UqNnh64SQk6pZNrRYNABLdGsxJVLZjWspHTQLrOJYnX3UX0ndr4", categoria: "Pisos e Revestimentos" },
     { id: 51, nome: "Capacete de Obra", preco: 20.02, unidade: "unidade", estoque: 100, imagem: "https://hidrauflex.cdn.magazord.com.br/img/2025/09/produto/2614/227073-800-800.jpg?ims=600x600", categoria: "Ferramentas" }
-  ]; 
+  ];
+
   const adicionarCarrinho = (produto: Produto) => {
     setCarrinho(prev => {
       const itemExistente = prev.find(item => item.produto.id === produto.id)
@@ -114,7 +115,23 @@ export default function ProdutoPage() {
   const total = useMemo(() => carrinho.reduce((acc, item) => acc + item.produto.preco * item.quantidade, 0), [carrinho])
   const totalItens = useMemo(() => carrinho.reduce((acc, item) => acc + item.quantidade, 0), [carrinho])
 
-  const categorias = ["Todos", "Cimento", "Tijolo", "Areia e Brita", "Ferro", "Telha", "Pisos e Revestimentos"]
+  // CORREÇÃO: Categorias geradas dinamicamente
+  const categorias = useMemo(() => {
+    const categoriasUnicas = produtos.reduce((acc, produto) => {
+      if (produto.categoria && !acc.includes(produto.categoria)) {
+        acc.push(produto.categoria)
+      }
+      return acc
+    }, [] as string[])
+
+    // Adiciona "Todos" e ordena o restante
+    return ["Todos", ...categoriasUnicas].sort((a, b) => {
+        if (a === "Todos") return -1 // Garante que "Todos" fica sempre em primeiro
+        if (b === "Todos") return 1
+        return a.localeCompare(b) // Ordena as demais alfabeticamente
+    })
+  }, [produtos])
+
   const produtosFiltrados = useMemo(() => {
     return filtro === "Todos" ? produtos : produtos.filter(p => p.categoria === filtro)
   }, [filtro, produtos])
@@ -162,7 +179,7 @@ export default function ProdutoPage() {
           </div>
         </div>
       </header>
-      
+        
       {/* Banner Institucional */}
       <div className="bg-gradient-to-br from-red-700 to-red-500 text-white p-10 mt-0 sm:mt-4 mb-10 mx-auto max-w-7xl rounded-none sm:rounded-xl text-center shadow-2xl shadow-red-300/50">
         <h2 className="text-4xl sm:text-5xl font-extrabold mb-3 tracking-tight">Construa o Seu Sonho!</h2>
@@ -177,7 +194,7 @@ export default function ProdutoPage() {
         <div className="flex-1 min-w-0">
           <h1 className="text-3xl font-bold mb-8 text-center text-red-700">🛠️ Catálogo de Produtos</h1>
 
-          {/* Filtros Estilizados em Vermelho */}
+          {/* Filtros Estilizados em Vermelho (AGORA DINÂMICOS) */}
           <div className="flex flex-wrap gap-3 mb-10 justify-center p-3 bg-white rounded-xl shadow-lg border border-gray-100">
             {categorias.map(cat => (
               <button
@@ -208,15 +225,15 @@ export default function ProdutoPage() {
                     </span>
                   )}
                   <div className="w-full flex justify-center mb-4">
-                     <div className="w-40 h-40 bg-gray-100 rounded-xl overflow-hidden shadow-inner">
-                        <img
+                      <div className="w-40 h-40 bg-gray-100 rounded-xl overflow-hidden shadow-inner">
+                          <img
                             src={produto.imagem}
                             alt={produto.nome}
                             className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                        />
-                     </div>
+                          />
+                      </div>
                   </div>
-                 
+                  
                   {/* Conteúdo do Produto - Centralizado Horizontalmente */}
                   <div className="flex flex-col items-center flex-grow w-full text-center">
                     <h2 className="text-xl font-bold text-gray-800 line-clamp-2 mb-1">{produto.nome}</h2>
@@ -229,8 +246,8 @@ export default function ProdutoPage() {
                       onClick={() => adicionarCarrinho(produto)}
                       disabled={produto.estoque <= 0}
                     >
-                      <ShoppingCart className="w-5 h-5"/> 
-                      {produto.estoque > 0 ? 'Comprar' : 'Esgotado'} 
+                      <ShoppingCart className="w-5 h-5"/>
+                      {produto.estoque > 0 ? 'Comprar' : 'Esgotado'}
                     </RedButton>
                   </div>
                 </div>
@@ -266,7 +283,7 @@ export default function ProdutoPage() {
             <>
               <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
                 {carrinho.map(item => {
-                  const produtoOriginal = produtos.find(p => p.id === item.produto.id); 
+                  const produtoOriginal = produtos.find(p => p.id === item.produto.id);
                   return (
                     <div key={item.produto.id} className="flex gap-3 items-start border-b pb-3 last:border-b-0">
                       <img src={item.produto.imagem} alt={item.produto.nome} className="w-12 h-12 object-cover rounded-md flex-shrink-0 shadow" />
