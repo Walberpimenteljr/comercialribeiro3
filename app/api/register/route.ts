@@ -10,44 +10,50 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Todos os campos são obrigatórios" }, { status: 400 });
     }
 
+    // Array para coletar todos os erros de validação da senha
+    const passwordErrors: string[] = [];
+    
+    // ⭐ INÍCIO: Validações de Senha
+    
+    // 1. Comprimento Mínimo
     if (password.length < 8) {
-      return NextResponse.json(
-        { message: "A senha deve ter no mínimo 8 caracteres." },
-        { status: 400 }
-      );
+      passwordErrors.push("A senha deve ter no mínimo 8 caracteres.");
     }
 
     // 2. Letra Maiúscula
     if (!/[A-Z]/.test(password)) {
-      return NextResponse.json(
-        { message: "A senha deve conter pelo menos uma letra maiúscula." },
-        { status: 400 }
-      );
+      passwordErrors.push("A senha deve conter pelo menos uma letra maiúscula.");
     }
 
     // 3. Letra Minúscula
     if (!/[a-z]/.test(password)) {
-      return NextResponse.json(
-        { message: "A senha deve conter pelo menos uma letra minúscula." },
-        { status: 400 }
-      );
+      passwordErrors.push("A senha deve conter pelo menos uma letra minúscula.");
     }
 
     // 4. Número
     if (!/[0-9]/.test(password)) {
-      return NextResponse.json(
-        { message: "A senha deve conter pelo menos um número." },
-        { status: 400 }
-      );
+      passwordErrors.push("A senha deve conter pelo menos um número.");
     }
 
-    // 5. Caractere Especial (opcional, mas recomendado)
+    // 5. Caractere Especial
     if (!/[^A-Za-z0-9]/.test(password)) {
-      return NextResponse.json(
-        { message: "A senha deve conter pelo menos um caractere especial (ex: !, @, #, $)." },
-        { status: 400 }
-      );
+      passwordErrors.push("A senha deve conter pelo menos um caractere especial (ex: !, @, #, $).");
     }
+    
+    // ⭐ FIM: Validações de Senha
+
+    // 🛑 NOVO: Retorna todos os erros de senha de uma vez
+    if (passwordErrors.length > 0) {
+        return NextResponse.json(
+            { 
+                message: "A senha não atende aos requisitos de segurança.", 
+                errors: passwordErrors // Retorna a lista completa de erros
+            }, 
+            { status: 400 }
+        );
+    }
+    
+    // Verificar se email já existe
     const { data: existingUser } = await supabase
       .from("users")
       .select("id")
@@ -58,10 +64,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Email já cadastrado" }, { status: 409 });
     }
 
-    // Hash da senha (ocorre somente se as validações passarem)
+    // Hash da senha
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    
+    // Inserir usuário
     const { data, error } = await supabase
       .from("users")
       .insert({ name, email, password: hashedPassword })
