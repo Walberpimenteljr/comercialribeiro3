@@ -1,9 +1,11 @@
 "use client"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { Logo } from "@/component/Logo"
 import { RedButton } from "@/component/RedButton"
+import { ShoppingCart, User, X } from "lucide-react" // Assumindo o uso de lucide-react para ícones
 
+// Importações e Interfaces mantidas
 interface Produto {
   id: number
   nome: string
@@ -14,12 +16,17 @@ interface Produto {
   categoria?: string
 }
 
+// O componente de botão foi extraído para um uso mais limpo (se você tiver o RedButton, isso deve funcionar)
+// Se você não tiver o lucide-react, pode usar emojis ou svg simples.
+
 export default function ProdutoPage() {
   const router = useRouter()
   const [carrinho, setCarrinho] = useState<{ produto: Produto; quantidade: number }[]>([])
   const [mostrarMenu, setMostrarMenu] = useState(false)
+  const [mostrarCarrinho, setMostrarCarrinho] = useState(true) // Controla a abertura/fechamento do drawer
   const [filtro, setFiltro] = useState<string>("Todos")
 
+  // --- Lógica de Dados (Inalterada) ---
   const produtos: Produto[] = [
     { id: 1, nome: "Cimento Portland", preco: 25.9, unidade: "50kg", estoque: 100, imagem: "https://static.wixstatic.com/media/e645de_4c98327f16584cdabd476aa3f29bbf2f~mv2.jpg/v1/fill/w_420,h_420,al_c,lg_1,q_80/e645de_4c98327f16584cdabd476aa3f29bbf2f~mv2.jpg", categoria: "Cimento" },
     { id: 2, nome: "Tijolo Cerâmico", preco: 0.85, unidade: "unidade", estoque: 5000, imagem: "https://img.irroba.com.br/filters:fill(fff):quality(80)/fluzaoco/catalog/api/fluzaoco_citelirr/66bdef5bd2d01.jpg", categoria: "Tijolo" },
@@ -31,9 +38,9 @@ export default function ProdutoPage() {
     { id: 8, nome: "Revestimento Vizcaya Código 201520 - 80x80 cm Tipo A (M²)", preco: 71.90, unidade: "unidade", estoque: 2000, imagem: "https://images.tcdn.com.br/img/img_prod/551909/revestimento_vizcaya_cdo_201520_80x80_cm_1851_1_fb9afff7b46ad3492a5d4e6cb954f168.jpeg", categoria: "Pisos e Revestimentos" },
     { id: 9, nome: "Piso Pisoforte Orlando Acetinado Classe A 44 x 44 Cm", preco: 25.10, unidade: "unidade", estoque: 2000, imagem: "https://images.tcdn.com.br/img/img_prod/551909/piso_pisoforte_orlando_acetinado_classe_a_44_x_44_1_20251009152354_0fbf91a64554.jpg", categoria: "Pisos e Revestimentos" },
     { id: 10, nome: "Cimento Montes Claros 50 Kg", preco: 44.50, unidade: "50kg", estoque: 100, imagem: "https://images.tcdn.com.br/img/img_prod/551909/cimento_montes_claros_50_kg_a_vista_entrega_em_ubaira_zona_rural_entrega_em_cidades_vizinhas_763_2_0098b569731ab5777df24903c0d270ec.jpg", categoria: "Cimento" },
-
   ]
 
+  // --- Funções de Lógica (Inalteradas) ---
   const adicionarCarrinho = (produto: Produto) => {
     setCarrinho(prev => {
       const itemExistente = prev.find(item => item.produto.id === produto.id)
@@ -43,11 +50,18 @@ export default function ProdutoPage() {
           item.produto.id === produto.id ? { ...item, quantidade: item.quantidade + 1 } : item
         )
       }
+      // Abre o carrinho automaticamente ao adicionar o primeiro item
+      setMostrarCarrinho(true)
       return [...prev, { produto, quantidade: 1 }]
     })
   }
 
-  const removerItem = (id: number) => setCarrinho(prev => prev.filter(item => item.produto.id !== id))
+  const removerItem = (id: number) => setCarrinho(prev => {
+    const novoCarrinho = prev.filter(item => item.produto.id !== id)
+    // Fecha o carrinho se estiver vazio após a remoção
+    if (novoCarrinho.length === 0) setMostrarCarrinho(false)
+    return novoCarrinho
+  })
 
   const mudarQuantidade = (id: number, quantidade: number) => {
     const produto = produtos.find(p => p.id === id)
@@ -61,110 +75,226 @@ export default function ProdutoPage() {
     router.push(`/checkout?carrinho=${query}`)
   }
 
-  const total = carrinho.reduce((acc, item) => acc + item.produto.preco * item.quantidade, 0)
+  const total = useMemo(() => carrinho.reduce((acc, item) => acc + item.produto.preco * item.quantidade, 0), [carrinho])
+  const totalItens = useMemo(() => carrinho.reduce((acc, item) => acc + item.quantidade, 0), [carrinho])
 
   const categorias = ["Todos", "Cimento", "Tijolo", "Areia e Brita", "Ferro", "Telha", "Pisos e Revestimentos"]
-  const produtosFiltrados = filtro === "Todos" ? produtos : produtos.filter(p => p.categoria === filtro)
+  const produtosFiltrados = useMemo(() => {
+    return filtro === "Todos" ? produtos : produtos.filter(p => p.categoria === filtro)
+  }, [filtro, produtos])
+  // --- Fim da Lógica ---
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
-      {/* Header */}
-      <header className="bg-white shadow-md border-b">
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center h-16">
+      {/* Header Estilizado */}
+      <header className="sticky top-0 bg-white shadow-lg z-20 border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
           <Logo size="small" />
-          <div className="relative">
-            <button
-              className="flex items-center gap-2 text-gray-700 font-medium px-4 py-2 rounded hover:bg-gray-100 transition"
-              onClick={() => setMostrarMenu(!mostrarMenu)}
-            >
-              👤 Menu
-            </button>
-            {mostrarMenu && (
-              <div className="absolute right-0 mt-2 w-36 bg-white border rounded shadow-lg z-10 backdrop-blur-sm bg-white/70 transition-transform origin-top">
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 transition"
-                  onClick={() => router.push("/login")}
-                >
-                  Sair
-                </button>
-              </div>
+          <div className="flex items-center gap-4">
+            {/* Botão de Carrinho (Apenas em Mobile e quando o Drawer estiver fechado) */}
+            {carrinho.length > 0 && (
+              <button
+                className={`md:hidden relative p-2 rounded-full transition ${mostrarCarrinho ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                onClick={() => setMostrarCarrinho(!mostrarCarrinho)}
+                aria-label="Abrir Carrinho"
+              >
+                <ShoppingCart className="w-6 h-6" />
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">{totalItens}</span>
+              </button>
             )}
+
+            {/* Menu Dropdown */}
+            <div className="relative">
+              <button
+                className="flex items-center gap-2 text-gray-700 font-medium px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition duration-200"
+                onClick={() => setMostrarMenu(!mostrarMenu)}
+                aria-expanded={mostrarMenu}
+              >
+                <User className="w-5 h-5" /> Menu
+              </button>
+              {mostrarMenu && (
+                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-xl z-30 transition-opacity duration-300 opacity-100">
+                  <button
+                    className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-red-500 hover:text-white transition rounded-t-lg"
+                    onClick={() => router.push("/login")}
+                  >
+                    Sair
+                  </button>
+                  {/* Adicione mais itens de menu aqui se necessário */}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
+      {/* --- Fim Header --- */}
 
-      {/* Banner Institucional */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-600 rounded-xl text-white p-8 mb-8 mx-4 md:mx-0 text-center">
-        <h2 className="text-4xl font-bold mb-2">Bem-vindo à Nossa Loja!</h2>
-        <p className="text-lg mb-4">Encontre os melhores materiais de construção com qualidade e preço justo.</p>
-        <RedButton className="px-6 py-3 text-lg font-semibold">Explore o Catálogo</RedButton>
+      {/* Banner Institucional Estilizado */}
+      <div className="bg-gradient-to-br from-red-600 to-orange-500 text-white p-10 mt-0 sm:mt-4 mb-10 mx-auto max-w-7xl rounded-none sm:rounded-xl text-center shadow-lg">
+        <h2 className="text-4xl sm:text-5xl font-extrabold mb-3 tracking-tight">Construa o Seu Sonho!</h2>
+        <p className="text-xl opacity-90 mb-6">Materiais de alta qualidade e com o melhor preço para sua obra.</p>
+        <RedButton className="px-8 py-3 text-lg font-semibold bg-white text-red-600 hover:bg-gray-100 shadow-xl border border-transparent">
+          Ver Ofertas Especiais
+        </RedButton>
       </div>
+      {/* --- Fim Banner --- */}
 
-      <main className="max-w-6xl mx-auto px-4 py-4">
-        <h1 className="text-3xl font-bold mb-6 text-center">Materiais de Construção</h1>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row gap-8">
+        {/* Conteúdo Principal (Produtos) */}
+        <div className="flex-1 min-w-0">
+          <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">🛠️ Catálogo de Produtos</h1>
 
-        {/* Filtros */}
-        <div className="flex flex-wrap gap-3 mb-6 justify-center">
-          {categorias.map(cat => (
-            <button
-              key={cat}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filtro === cat ? "bg-orange-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"
-              }`}
-              onClick={() => setFiltro(cat)}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Grid de produtos */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {produtosFiltrados.map(produto => (
-            <div
-              key={produto.id}
-              className="bg-white p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 flex flex-col items-center relative"
-            >
-              {produto.estoque < 10 && (
-                <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">Últimas unidades!</span>
-              )}
-              <img
-                src={produto.imagem}
-                alt={produto.nome}
-                className="w-36 h-36 object-cover mb-4 rounded-xl"
-              />
-              <h2 className="text-lg font-semibold text-gray-800 text-center">{produto.nome}</h2>
-              <p className="text-gray-500">{produto.unidade}</p>
-              <p className="text-green-600 font-bold mt-2 text-lg">R$ {produto.preco.toFixed(2)}</p>
-              <RedButton
-                className="mt-4 px-5 py-2 w-full bg-red-600 hover:bg-red-700 transition text-white rounded-lg font-medium"
-                onClick={() => adicionarCarrinho(produto)}
+          {/* Filtros Estilizados */}
+          <div className="flex flex-wrap gap-3 mb-10 justify-center p-3 bg-white rounded-xl shadow-inner border border-gray-100">
+            {categorias.map(cat => (
+              <button
+                key={cat}
+                className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 shadow-md ${
+                  filtro === cat
+                    ? "bg-red-600 text-white shadow-red-300/50"
+                    : "bg-blue-500 text-white hover:bg-blue-600 hover:shadow-blue-300/50"
+                }`}
+                onClick={() => setFiltro(cat)}
               >
-                Adicionar
-              </RedButton>
-            </div>
-          ))}
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Grid de produtos Estilizado */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {produtosFiltrados.length > 0 ? (
+              produtosFiltrados.map(produto => (
+                <div
+                  key={produto.id}
+                  className="bg-white p-6 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 flex flex-col items-center relative border border-gray-100"
+                >
+                  {produto.estoque < 10 && (
+                    <span className="absolute top-4 right-4 bg-yellow-500 text-gray-800 text-xs font-bold px-3 py-1 rounded-full shadow-md animate-pulse">
+                      Baixo Estoque!
+                    </span>
+                  )}
+                  <div className="w-40 h-40 bg-gray-100 rounded-xl mb-4 overflow-hidden shadow-inner">
+                    <img
+                      src={produto.imagem}
+                      alt={produto.nome}
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                    />
+                  </div>
+                  <div className="flex flex-col items-center flex-grow w-full text-center">
+                    <h2 className="text-xl font-bold text-gray-800 line-clamp-2 mb-1">{produto.nome}</h2>
+                    <p className="text-sm text-gray-500 mb-3">({produto.unidade})</p>
+                    <p className="text-2xl text-red-600 font-extrabold mt-auto mb-4">R$ {produto.preco.toFixed(2)}</p>
+                    <RedButton
+                      className="px-6 py-2 w-full bg-red-600 hover:bg-red-700 transition duration-200 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl disabled:bg-gray-400"
+                      onClick={() => adicionarCarrinho(produto)}
+                      disabled={produto.estoque <= 0}
+                    >
+                      {produto.estoque > 0 ? 'Adicionar ao Carrinho' : 'Esgotado'}
+                    </RedButton>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-center col-span-full text-lg text-gray-500">Nenhum produto encontrado nesta categoria.</p>
+            )}
+          </div>
         </div>
+        {/* --- Fim Produtos --- */}
+
+        {/* Carrinho Lateral (Drawer) */}
+        <div className={`
+          fixed inset-y-0 right-0 w-80 sm:w-96 bg-white shadow-2xl p-6 z-40 transition-transform duration-300
+          ${mostrarCarrinho ? 'translate-x-0' : 'translate-x-full'}
+          md:sticky md:top-20 md:h-fit md:translate-x-0 md:shadow-xl md:rounded-xl md:p-5
+        `}>
+          <div className="flex justify-between items-center mb-6 border-b pb-3">
+            <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+              <ShoppingCart className="w-6 h-6 text-red-600" /> Carrinho
+            </h3>
+            <button
+              className="md:hidden text-gray-500 hover:text-gray-800 p-1 rounded-full hover:bg-gray-100 transition"
+              onClick={() => setMostrarCarrinho(false)}
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          {carrinho.length === 0 ? (
+            <p className="text-gray-400 text-center py-10">Seu carrinho está vazio. 🛒</p>
+          ) : (
+            <>
+              <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                {carrinho.map(item => {
+                  const produtoOriginal = produtos.find(p => p.id === item.produto.id); // Para obter o estoque correto
+                  return (
+                    <div key={item.produto.id} className="flex gap-3 items-start border-b pb-3 last:border-b-0">
+                      <img src={item.produto.imagem} alt={item.produto.nome} className="w-12 h-12 object-cover rounded-md flex-shrink-0 shadow" />
+                      <div className="flex-grow">
+                        <p className="font-medium text-sm text-gray-800 leading-tight line-clamp-2">{item.produto.nome}</p>
+                        <p className="text-xs text-gray-500">R$ {item.produto.preco.toFixed(2)} / {item.produto.unidade}</p>
+                        <div className="flex items-center mt-1">
+                          {/* Botão de Remover Item */}
+                          <button
+                            className="text-red-500 hover:text-red-700 text-xs font-semibold mr-3 transition"
+                            onClick={() => removerItem(item.produto.id)}
+                            aria-label="Remover item"
+                          >
+                            Remover
+                          </button>
+                          
+                          {/* Campo de Quantidade */}
+                          <input
+                            type="number"
+                            min="1"
+                            max={produtoOriginal?.estoque || 999}
+                            value={item.quantidade}
+                            onChange={(e) => mudarQuantidade(item.produto.id, parseInt(e.target.value))}
+                            className="w-14 px-1 py-0.5 text-center border rounded-md text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
+                          />
+                        </div>
+                      </div>
+                      <span className="font-bold text-red-600 flex-shrink-0">R$ {(item.produto.preco * item.quantidade).toFixed(2)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-6 pt-4 border-t-2 border-dashed border-gray-200">
+                <div className="flex justify-between items-center text-xl font-extrabold text-gray-800">
+                  <span>Total:</span>
+                  <span className="text-red-600">R$ {total.toFixed(2)}</span>
+                </div>
+                <RedButton onClick={finalizarCompra} className="mt-4 w-full text-lg py-3 shadow-red-400/50 hover:shadow-red-500/70">
+                  Prosseguir para o Checkout
+                </RedButton>
+              </div>
+            </>
+          )}
+        </div>
+        {/* --- Fim Carrinho --- */}
       </main>
 
-      {/* Carrinho lateral fixo */}
-      <div className="fixed right-4 top-20 w-80 bg-white shadow-xl rounded-xl p-5 z-50">
-        <h3 className="text-xl font-bold mb-4">Carrinho</h3>
-        {carrinho.length === 0 ? (
-          <p className="text-gray-400">Seu carrinho está vazio.</p>
-        ) : (
-          <>
-            {carrinho.map(item => (
-              <div key={item.produto.id} className="flex justify-between items-center mb-3">
-                <span>{item.produto.nome} x{item.quantidade}</span>
-                <span>R$ {(item.produto.preco * item.quantidade).toFixed(2)}</span>
-              </div>
-            ))}
-            <div className="text-right font-bold text-lg mt-3">Total: R$ {total.toFixed(2)}</div>
-            <RedButton onClick={finalizarCompra} className="mt-3 w-full">Finalizar Compra</RedButton>
-          </>
-        )}
-      </div>
+      {/* Botão Flutuante para abrir o carrinho em Mobile/Pequenas Telas */}
+      {carrinho.length > 0 && !mostrarCarrinho && (
+        <button
+          className="fixed bottom-6 right-6 p-4 bg-red-600 text-white rounded-full shadow-2xl z-50 hover:bg-red-700 transition md:hidden"
+          onClick={() => setMostrarCarrinho(true)}
+          aria-label="Abrir Carrinho"
+        >
+          <ShoppingCart className="w-6 h-6" />
+          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-blue-500 rounded-full">{totalItens}</span>
+        </button>
+      )}
+
+      {/* Overlay para fechar o Drawer em Mobile */}
+      {mostrarCarrinho && carrinho.length > 0 && (
+        <div
+          className="fixed inset-0 bg-gray-900 bg-opacity-50 z-30 md:hidden"
+          onClick={() => setMostrarCarrinho(false)}
+          aria-hidden="true"
+        ></div>
+      )}
     </div>
   )
 }
