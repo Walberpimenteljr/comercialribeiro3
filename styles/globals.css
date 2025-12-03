@@ -86,3 +86,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* 🚀 CORREÇÃO DE ESPECIFICIDADE PARA O FUNDO DO TOAST DE ERRO 🚀 */
+.bg-destructive {
+    background-color: oklch(1 0 0) !important; 
+    color: var(--destructive-foreground) !important; 
+}
+/* ------------------------------------------------------------ */
