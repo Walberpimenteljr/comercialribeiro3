@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import bcrypt from "bcryptjs"; // <-- 1. IMPORTANDO A BIBLIOTECA DE HASH
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,26 +14,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data, error } = await supabase
+    // 2. BUSCAR O USUÁRIO APENAS PELO EMAIL
+    // Não podemos buscar pela senha criptografada aqui.
+    const { data: user, error: fetchError } = await supabase
       .from("users")
-      .select("*")
+      .select("id, name, email, password") // Certifique-se de selecionar a coluna 'password'
       .eq("email", email)
-      .eq("password", password)
       .single();
 
-    console.log("Resultado busca usuário login:", { data, error });
+    console.log("Resultado busca usuário login:", { user, fetchError });
 
-    if (error || !data) {
+    if (fetchError || !user) {
+      // Retorna "Credenciais inválidas" para não dar dica sobre qual campo está errado.
       return NextResponse.json(
         { message: "Credenciais inválidas" },
         { status: 401 }
       );
     }
 
+    // 3. COMPARAR A SENHA EM TEXTO PURO COM O HASH SALVO
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      console.log("Senha fornecida não corresponde ao hash.");
+      return NextResponse.json(
+        { message: "Credenciais inválidas" },
+        { status: 401 }
+      );
+    }
+
+    // 4. LOGIN REALIZADO COM SUCESSO
     return NextResponse.json({
       message: "Login realizado com sucesso",
-      user: { id: data.id, name: data.name, email: data.email },
+      user: { id: user.id, name: user.name, email: user.email },
     });
+
   } catch (err) {
     console.error("Erro interno no login:", err);
     return NextResponse.json(
